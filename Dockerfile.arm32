@@ -1,0 +1,15 @@
+FROM armhf/debian:jessie
+
+ENV VERSION v1.3.0
+ENV DUMPINIT_VERSION v1.2.0
+ENV ARCH arm32
+
+ADD https://github.com/gdeverlant/local-persist/releases/download/${VERSION}/local-persist-linux-${ARCH} /usr/bin/docker-volume-local-persist
+RUN chmod +x /usr/bin/docker-volume-local-persist
+
+ADD https://github.com/gdeverlant/dumb-init/releases/download/${DUMPINIT_VERSION}/dumb-init-linux-${ARCH} /usr/bin/dumb-init
+RUN chmod +x /usr/bin/dumb-init
+
+RUN mkdir -p /var/lib/docker/plugin-data/
+
+CMD ["dumb-init", "/usr/bin/docker-volume-local-persist"]

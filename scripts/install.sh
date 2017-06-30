@@ -2,7 +2,7 @@
 
 set -e
 
-VERSION="v1.3.0"
+VERSION="v1.3.1"
 
 # uname -s, uname -m
 # Deb 32: Linux i686
@@ -27,13 +27,18 @@ function setenv {
                 SUPPORTED=true
             ;;
             "i686")
-                # ARCH="386"
-                SUPPORTED=false
+                ARCH="386"
+                SUPPORTED=true
             ;;
             # untested
             arm*)
-                # ARCH="arm"
-                SUPPORTED=false
+                ARCH="arm32"
+                SUPPORTED=true
+            ;;
+			# untested
+            aarch64*)
+                ARCH="arm64"
+                SUPPORTED=true
             ;;
         esac
     elif [[ $OS == 'freebsd' ]]; then
@@ -56,7 +61,7 @@ function install-binary {
         (sudo systemctl stop docker-volume-local-persist || true)
     fi
 
-    BINARY_URL="https://github.com/CWSpear/local-persist/releases/download/${VERSION}/local-persist-${OS}-${ARCH}"
+	BINARY_URL="https://github.com/gdeverlant/local-persist/releases/download/${VERSION}/local-persist-${OS}-${ARCH}"
     BINARY_DEST="/usr/bin/docker-volume-local-persist"
 
     echo Downloading binary:
@@ -72,7 +77,8 @@ function install-binary {
 
 # Systemd (default)
 function setup-systemd {
-    SYSTEMD_CONFIG_URL="https://raw.githubusercontent.com/CWSpear/local-persist/${VERSION}/init/systemd.service"
+	SYSTEMD_CONFIG_URL="https://raw.githubusercontent.com/gdeverlant/local-persist/master/init/systemd.service"
+	
     SYSTEMD_CONFIG_DEST="/etc/systemd/system/docker-volume-local-persist.service"
 
     echo Downloading Systemd service conf:
@@ -99,7 +105,7 @@ function start-systemd {
 
 # Upstart
 function setup-upstart {
-    UPSTART_CONFIG_URL="https://raw.githubusercontent.com/CWSpear/local-persist/${VERSION}/init/upstart.conf"
+	UPSTART_CONFIG_URL="https://raw.githubusercontent.com/gdeverlant/local-persist/master/init/upstart.conf"
     UPSTART_CONFIG_DEST="/etc/init/docker-volume-local-persist.conf"
 
     echo Downloading binary:
